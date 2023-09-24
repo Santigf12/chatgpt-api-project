@@ -13,7 +13,7 @@ def my_function(request):
 
 
 # Set your OpenAI API key here
-openai.api_key = "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"
+openai.api_key = "secret"
 
 @functions_framework.http
 def chat_with_openai(request):
