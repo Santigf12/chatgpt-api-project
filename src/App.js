@@ -1,5 +1,6 @@
 import { useState, useEffect} from "react"
 
+
 import Sidebar from "./components/Sidebar";
 import Chatmain from "./components/Chatmain";
 import Navbar from "./components/Navbar";
@@ -15,9 +16,16 @@ function App() {
 
 
 
-  const onAddchat = () => {
+  const onAddchat = (model) => {
+    if (model === 1) {
+      model = "gpt-3.5"
+    } else if (model === 2) {
+      model = "gpt-4"
+    }
+
     const chats_new = {
       chatId: nanoidv2(),
+      chatModel: model,
       chatTitle: "Untitled",
       messages: [], 
     };
@@ -31,10 +39,11 @@ function App() {
     return chats.find((chat) => chat.chatId === active);
   };
 
-  const onSendMessage = (chatId, messageText) => {
+  const onSendMessage = async (chatId, model, question) => {
     const message = {
       messageId: nanoidv2(),
-      messageBody: messageText,
+      messageBody: question,
+      messageModel: model,
       sender: "You", // Replace with sender's name or ID
       date: new Date().toISOString(),
     };
@@ -52,6 +61,18 @@ function App() {
 
     setChats(updatedChats);
     localStorage.setItem("chats", JSON.stringify(updatedChats));
+
+    const url = 'https://us-west1-chatgpt-api-project.cloudfunctions.net/get-chat-ai';
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    // Send the message to the AI
+    fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(data => console.log(data));
+
   };
 
   useEffect(() => {

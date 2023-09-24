@@ -9,7 +9,7 @@ function Chatmain({active, onSendMessage, onReceiveMessage}) {
 
   const handleSendMessage = () => {
     if (messageText.trim() !== "") {
-      onSendMessage(active.chatId, messageText);
+      onSendMessage(active.chatId, active.chatModel, messageText);
       setMessageText("");
       setCanSendMessage(false);
     }
