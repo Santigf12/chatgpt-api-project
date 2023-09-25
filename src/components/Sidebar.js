@@ -25,7 +25,7 @@ function Sidebar({chats, onAddchat, active, setActive, toggle}) {
                     <CDropdownMenu>
                         <CDropdownItem onClick={() => onAddchat(1)} href="#">ChatGPT 3.5</CDropdownItem>
                         <CDropdownItem onClick={() => onAddchat(2)} href="#">ChatGPT 4</CDropdownItem>
-                        <CDropdownItem href="#">Dalle 2</CDropdownItem>
+                        <CDropdownItem onClick={() => onAddchat(3)}href="#">Dalle 2</CDropdownItem>
                     </CDropdownMenu>
                 </CDropdown>
 

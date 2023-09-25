@@ -17,16 +17,23 @@ function App() {
 
 
   const onAddchat = (model) => {
+    let pretty = ""
+
     if (model === 1) {
       model = "gpt-3.5"
+      pretty = "ChatGPT 3.5"
     } else if (model === 2) {
       model = "gpt-4"
+      pretty = "ChatGPT 4"
+    } else if (model === 3) {
+      model = "image"
+      pretty = "DALL-E 2"
     }
 
     const chats_new = {
       chatId: nanoidv2(),
       chatModel: model,
-      chatTitle: "Untitled",
+      chatTitle: `AI Chat: ${pretty}`,
       messages: [], 
     };
 
@@ -39,7 +46,7 @@ function App() {
     return chats.find((chat) => chat.chatId === active);
   };
 
-  const onSendMessage = async (chatId, model, question) => {
+  const onSaveMessage = (chatId, model, question) => {
     const message = {
       messageId: nanoidv2(),
       messageBody: question,
@@ -61,36 +68,20 @@ function App() {
 
     setChats(updatedChats);
     localStorage.setItem("chats", JSON.stringify(updatedChats));
-
-    const url = 'https://us-west1-chatgpt-api-project.cloudfunctions.net/get-chat-ai';
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    };
-
-    // Send the message to the AI
-    fetch(url, requestOptions)
-      .then(response => response.json())
-      .then(data => console.log(data));
-
   };
 
-  useEffect(() => {
-    // Save the active chat to localStorage
-    localStorage.setItem("active", active);
-  }, [active]);
-
-  const onReceiveMessage = (chatId, messageText) => {
+  const onReceiveMessage = (chatId, model, messageText) => {
     const message = {
       messageId: nanoidv2(),
       messageBody: messageText,
-      sender: "AI", // Replace with sender's name or ID
+      messageModel: model,
+      sender: "AI",
       date: new Date().toISOString(),
     };
-
-
+  
     const updatedChats = chats.map((chat) => {
       if (chat.chatId === chatId) {
+        // Create a new chat object with the updated messages array
         return {
           ...chat,
           messages: [...chat.messages, message],
@@ -98,21 +89,24 @@ function App() {
       }
       return chat;
     });
-
-    setChats(updatedChats);
+  
+    setChats(updatedChats); // Update the state with the new message
     localStorage.setItem("chats", JSON.stringify(updatedChats));
   };
+
+  useEffect(() => {
+    // Save the active chat to localStorage
+    localStorage.setItem("active", active);
+  }, [active]);
 
 
   return (
     <dev className={`grid`}>
         <Sidebar chats={chats} onAddchat={onAddchat} active={active} setActive={setActive} />
         <Navbar/>
-        <Chatmain setChats={setChats} chats={chats} active={activeChat()} onSendMessage={onSendMessage} onReceiveMessage={onReceiveMessage} />
+        <Chatmain setChats={setChats} chats={chats} active={activeChat()} onSaveMessage={onSaveMessage} onReceiveMessage={onReceiveMessage} />
     </dev>
   );
 }
 
 export default App;
-
-

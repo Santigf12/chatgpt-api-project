@@ -3,13 +3,15 @@ import Message from "./Message";
 
 
 
-function Chatmain({active, onSendMessage, onReceiveMessage}) {
+function Chatmain({active, onSaveMessage, onReceiveMessage}) {
   const [messageText, setMessageText] = useState("");
   const [canSendMessage, setCanSendMessage] = useState(true);
+  const [apiResponse, setApiResponse] = useState("");
 
   const handleSendMessage = () => {
     if (messageText.trim() !== "") {
-      onSendMessage(active.chatId, active.chatModel, messageText);
+      onSaveMessage(active.chatId, active.chatModel, messageText);
+      handeApiCall();
       setMessageText("");
       setCanSendMessage(false);
     }
@@ -21,32 +23,46 @@ function Chatmain({active, onSendMessage, onReceiveMessage}) {
     }
   };
 
+  const handeApiCall = async () => {
+
+    const url = 'https://cors-anywhere.herokuapp.com/https://northamerica-northeast1-chatgpt-api-project.cloudfunctions.net/get-chat-ai-2';
+
+    const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({"model": active.chatModel, "question": messageText}),
+    });
+    const data = await response.json();
+    setApiResponse(data.response);
+  };
+
+
+
   useEffect(() => {
     if (!active) return;
-
-    if (active.messages.length > 0 && active.messages[active.messages.length - 1].sender === "You") { 
-      setTimeout(() => {
-        onReceiveMessage(active.chatId, "The existence of God is a deeply philosophical and theological question, and it's a topic that has been debated by scholars, theologians, and philosophers for centuries. There are various perspectives and beliefs regarding the existence of God, and it's important to note that opinions on this matter vary widely among individuals and cultures.");
-        setCanSendMessage(true);
-      }, 3000);
+    
+    if (active.messages.length > 0 && apiResponse !== "") { 
+      onReceiveMessage(active.chatId, active.chatModel, apiResponse);
+      setCanSendMessage(true);
+      setApiResponse("");
     }
-  }, [active]);
+  }, [active, apiResponse]);
 
   if(!active) return (
     <div className={`main-notes`}>
-      <div className={`no-active-note`}>No active note</div>  
+      <div className={`no-active-note`}>No active chat</div>  
     </div>
   );
 
   
-
-
   return (
     <div className={`main-notes`}>
       <div className="main-note-edit">
         <div className="message-area">
           {active.messages.map((message) => (
-            <Message key={message.messageId}   message={message} />
+            <Message key={message.messageId}   message={message} active={active} />
           ))}
         </div>
         <div className="input-area">
