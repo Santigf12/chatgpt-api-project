@@ -3,9 +3,9 @@ import Message from "./Message";
 
 
 
-function Chatmain({active, onSaveMessage, onReceiveMessage}) {
+function Chatmain({active, onSaveMessage, onReceiveMessage, canSendMessage, setCanSendMessage}) {
   const [messageText, setMessageText] = useState("");
-  const [canSendMessage, setCanSendMessage] = useState(true);
+  
   const [apiResponse, setApiResponse] = useState("");
 
   const handleSendMessage = () => {

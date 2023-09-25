@@ -22,13 +22,14 @@ function useCORSProxy() {
       }
       return open.apply(this, args);
     };
-  }, []); // Run this effect only once on component mount
+  }, []);
 }
 
 function App() {
   useCORSProxy();
   const [chats, setChats] = useState(localStorage.chats ? JSON.parse(localStorage.chats) : []);
   const [active, setActive] = useState(localStorage.active !== undefined ? parseInt(localStorage.active) : false);
+  const [canSendMessage, setCanSendMessage] = useState(true);
 
   const { customAlphabet } = require('nanoid')
   const nanoidv2 = customAlphabet('1234567890', 12)
@@ -121,9 +122,9 @@ function App() {
 
   return (
     <dev className={`grid`}>
-        <Sidebar chats={chats} onAddchat={onAddchat} active={active} setActive={setActive} />
+        <Sidebar chats={chats} onAddchat={onAddchat} active={active} setActive={setActive} canSendMessage={canSendMessage} />
         <Navbar/>
-        <Chatmain setChats={setChats} chats={chats} active={activeChat()} onSaveMessage={onSaveMessage} onReceiveMessage={onReceiveMessage} />
+        <Chatmain setChats={setChats} chats={chats} active={activeChat()} onSaveMessage={onSaveMessage} onReceiveMessage={onReceiveMessage} canSendMessage={canSendMessage} setCanSendMessage={setCanSendMessage} />
     </dev>
   );
 }

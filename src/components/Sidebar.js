@@ -1,19 +1,8 @@
 import {CDropdown, CDropdownToggle ,CDropdownMenu, CDropdownItem} from '@coreui/react'
 
-function Sidebar({chats, onAddchat, active, setActive, toggle}) {
+function Sidebar({chats, onAddchat, active, setActive, canSendMessage}) {
 
-    
-    
-    function removeTags(str) {
-        if ((str === null) || (str === ""))
-            return null;
-        else
-            str = str.toString();
-              
-        return str.replace( /(<([^>]+)>)/ig, '');
-    }
-    //<button onClick={onAddchat}>+</button>
-
+    console.log(canSendMessage);
     return (
     
         <div className={`sidebars`}>
@@ -35,7 +24,7 @@ function Sidebar({chats, onAddchat, active, setActive, toggle}) {
 
                 {chats.map((chat) => (
                    
-                    <div key={chat.chatId} className={`sidebar-note ${chat.chatId === active && "active"}`} onClick={() => {setActive(chat.chatId)}}>
+                    <div key={chat.chatId} className={`sidebar-note ${chat.chatId === active && "active"}`} onClick={() => {if(canSendMessage){setActive(chat.chatId)}}}>
 
                         <div className="sidebar-note-title">
                             <strong>{chat.chatTitle === "" ? "Untitled" : chat.chatTitle && chat.chatTitle.slice(0, 20)}</strong>
